@@ -1,5 +1,4 @@
 #include <iostream>
-#include <bits/stdc++.h>
 using namespace std; 
 
 int main() {
@@ -7,11 +6,14 @@ int main() {
     int n;
     while (cin >> n) {
         int tmp = 0;
-        for (int i = 1; i <= n; i++) {
+        int cnt = 1;
+        while(1)
+        {
             tmp = tmp * 10 + 1;
             tmp %= n;
-            if (tmp == 0) {
-                cout << i << "\n";
+            if(tmp == 0)
+            {
+                cout << cnt << "\n";
                 break;
             }
         }
