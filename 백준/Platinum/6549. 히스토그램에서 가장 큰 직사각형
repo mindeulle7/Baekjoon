@@ -1,0 +1,36 @@
+#include <iostream>
+#include <stack>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+	while (1) {
+		long long maximum = 0;
+		int n;
+		cin >> n;
+		if (n == 0) {
+			break;
+		}
+		stack <pair<long long, long long>> s; // first -> value, second -> index
+		for (long long i = 0; i < n; i++) {
+			pair<long long,long long> temp;
+			long long value;
+			cin >> value;
+			temp.first = value;
+			temp.second = i;
+			while (!s.empty() && value < s.top().first) {
+				temp.second = s.top().second;
+				maximum = max(maximum, (long long)((i - s.top().second) * s.top().first));
+				s.pop();
+			}
+			s.push(temp);
+		}
+		while (!s.empty()) {
+			maximum = max(maximum, (long long)((n - s.top().second) * s.top().first));
+			s.pop();
+
+		}
+		cout << maximum << endl;
+	}
+}
