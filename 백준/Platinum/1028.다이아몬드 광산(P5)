@@ -1,0 +1,95 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+using namespace std;
+
+int r, c;
+int maximum = 0;
+int arr[750][750];
+pair<int, int> cnt[750][750]; // first-> 왼위, second-> 오위
+
+
+bool check(pair<int, int> p) {
+    if (0 <= p.first && p.first < r && 0 <= p.second && p.second < c) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+void diamond(int row, int col) {
+    if (maximum == 0) {
+        maximum = 1;
+    }
+    for (int i = 1; i <= min(cnt[row][col].first, cnt[row][col].second); i++) {
+        pair<int, int> left, right;
+        left.first = row - i;
+        left.second = col - i;
+        right.first = row - i;
+        right.second = col + i;
+        /*cout << "when row = " << row << " col = " << col << endl;
+        cout << "left = " << left.first << "," << left.second << endl;
+        cout << "right = " << right.first << "," << right.second << endl;*/
+        if (check(left) && check(right)) {
+            pair<int, int> top;
+            top.first = left.first - i;
+            top.second = left.second + i;
+            //cout << "top = " << top.first << "," << top.second << endl;
+            if (i <= cnt[left.first][left.second].second && i <= cnt[right.first][right.second].first) {
+                if (check(top)) {
+                    maximum = max(maximum, i + 1);
+                    //cout << "maximum = " << maximum << endl;
+                }
+            }
+        }
+        else {
+            return;
+        }
+    }
+}
+
+int main() {
+    cin >> r >> c;
+    for (int i = 0; i < r; i++) {
+        string s;
+        cin >> s;
+        for (int j = 0; j < c; j++) {
+            arr[i][j] = s[j] - '0';
+            if (i == 0) {
+                cnt[i][j] = make_pair(0, 0);
+            }
+            else {
+                if (arr[i][j] == 0) {
+                    cnt[i][j] = make_pair(0, 0);
+                }
+                else {
+                    cnt[i][j].first = 0;
+                    cnt[i][j].second = 0;
+                    if (0 <= j - 1 && arr[i - 1][j - 1] == 1) {
+                        cnt[i][j].first = cnt[i - 1][j - 1].first + 1;
+                    }
+                    if (j + 1 < c && arr[i - 1][j + 1] == 1) {
+                        cnt[i][j].second = cnt[i - 1][j + 1].second + 1;
+                    }
+                }
+            }
+        }
+    }
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            if (arr[i][j] == 1) {
+                diamond(i, j);
+            }
+        }
+    }
+
+    cout << maximum << "\n";
+}
+
+
+//4 7
+//0001000
+//0010100
+//0101010
+//1000000
