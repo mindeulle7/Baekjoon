@@ -1,0 +1,99 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int n;
+
+bool arr[1001][1001];
+
+bool check_friend(vector<int> Frined) {
+	for (int i = 0; i < Frined.size(); i++) {
+		int cnt = 0;
+		int current = Frined[i];
+		for (int j = 0; j < Frined.size(); j++) {
+			int next = Frined[j];
+			if (arr[current][next]) {
+				cnt++;
+			}
+
+		}
+		if (cnt != Frined.size()) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void Move_frined(vector<int> &Friend, vector<int> &notFriend) {
+	vector<int> Move;
+	for (int i = 0; i < Friend.size(); i++) {
+		bool flag = true;
+		int current = Friend[i];
+		for (int j = 0; j < notFriend.size(); j++) {
+			int next = notFriend[j];
+			if (!arr[current][next]) {
+				flag = false;
+			}
+		}
+		if (flag) {
+			Move.push_back(current);
+		}
+	}
+	for (int i = 0; i < Move.size(); i++) {
+		notFriend.push_back(Move[i]);
+		Friend.erase(remove(Friend.begin(), Friend.end(), Move[i]), Friend.end());
+	}
+}
+
+int main() {
+	cin >> n;
+
+	while (1) {
+		int n1, n2;
+		cin >> n1 >> n2;
+		if (n1 == -1 || n2 == -1) {
+			break;
+		}
+		arr[n1][n2] = true;
+		arr[n2][n1] = true;
+	}
+	vector<int> Friend;
+	vector<int> notFriend;
+	for (int i = 1; i <= n; i++) {
+		arr[i][i] = true;
+		if (i == 1) {
+			continue;
+		}
+		if (arr[1][i]) {
+			Friend.push_back(i);
+		}
+		if (!arr[1][i]) {
+			notFriend.push_back(i);
+		}
+	}
+	if (!check_friend(notFriend)) {
+		cout << -1;
+		return 0;
+	}
+	else {
+		Move_frined(Friend, notFriend);
+		if (check_friend(Friend)) {
+			cout << "1\n";
+			Friend.push_back(1);
+			sort(Friend.begin(), Friend.end());
+			sort(notFriend.begin(), notFriend.end());
+			for (int i = 0; i < Friend.size(); i++) {
+				cout << Friend[i] << " ";
+			}
+			cout << "-1\n";
+			for (int i = 0; i < notFriend.size(); i++) {
+				cout << notFriend[i] << " ";
+			}
+			cout << "-1\n";
+		}
+		else {
+			cout << -1;
+		}
+	}
+}
