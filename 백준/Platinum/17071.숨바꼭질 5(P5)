@@ -1,0 +1,100 @@
+#include <iostream>
+#include <queue>
+#include <memory>
+using namespace std;
+
+int arrT[500001];
+bool cnt[500001][2]; // 0->홀수, 1->짝수
+
+struct node {
+	int p;
+	int t;
+};
+
+int Move[3]{
+	1,-1,2
+};
+
+
+int main() {
+	int minimum = 500000;
+	int start, target;
+	cin >> start >> target;
+	if (start == target) {
+		cout << 0;
+		return 0;
+	}
+	int temp = target;
+	int moving = 0;
+	while (1) {
+		if (500000 < temp) {
+			break;
+		}
+		arrT[temp] = moving;
+		/*cout << "position = " << temp << ", time = " << moving << endl;*/
+		moving++;
+		temp += moving;
+	}
+
+	queue<node> q;
+	q.push({ start, 0 });
+	while(!q.empty()) {
+		node current = q.front();
+		q.pop();
+		/*cout << "position = " << current.p << ", time = " << current.t << endl;*/
+		if (arrT[current.p] != 0) {
+			if (current.t <= arrT[current.p] && (arrT[current.p] - current.t) % 2 == 0) {
+				minimum = min(minimum, arrT[current.p]);
+			}
+		}
+		for (int i = 0; i < 3; i++) {
+			//walk
+			if (i == 0) {
+				node next = { current.p + Move[i], current.t + 1 };
+				if (0 <= next.p && next.p <= 500000) {
+					if (!cnt[next.p][0] && next.t % 2 == 1) {
+						q.push(next);
+						cnt[next.p][0] = true;
+					}
+					else if (!cnt[next.p][1] && next.t % 2 == 0) {
+						q.push(next);
+						cnt[next.p][1] = true;
+					}
+				}
+			}
+			else if (i == 1) {
+				node next = { current.p + Move[i], current.t + 1 };
+				if (0 <= next.p && next.p <= 500000) {
+					if (!cnt[next.p][0] && next.t % 2 == 1) {
+						q.push(next);
+						cnt[next.p][0] = true;
+					}
+					else if (!cnt[next.p][1] && next.t % 2 == 0) {
+						q.push(next);
+						cnt[next.p][1] = true;
+					}
+				}
+			}
+			//teleport
+			else {
+				node next = { current.p * Move[i], current.t + 1 };
+				if (0 <= next.p && next.p <= 500000) {
+					if (!cnt[next.p][0] && next.t % 2 == 1) {
+						q.push(next);
+						cnt[next.p][0] = true;
+					}
+					else if (!cnt[next.p][1] && next.t % 2 == 0) {
+						q.push(next);
+						cnt[next.p][1] = true;
+					}
+				}
+			}
+		}
+	}
+	if (minimum == 500000) {
+		cout << -1;
+	}
+	else {
+		cout << minimum;
+	}
+}
